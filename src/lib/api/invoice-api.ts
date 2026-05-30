@@ -16,13 +16,21 @@ export type InvoiceFilterOption = {
   [key: string]: unknown;
 };
 
-export type Invoice = {
-  id: string;
-  invoiceNumber: string;
-  invoiceNote?: string;
+export type InvoiceItem = {
   productId: string;
   productName: string;
   quantity: number;
+  price: number;
+  subTotal: number;
+};
+
+export type Invoice = {
+  id: string;
+  invoiceNumber: string;
+  invoiceNote?: string | null;
+  customerName: string;
+  customerPhone: string;
+  items: InvoiceItem[];
   originalAmount: number;
   extraFee: number;
   discountAmount: number;

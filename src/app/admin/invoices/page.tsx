@@ -1,6 +1,10 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { filterInvoices, Invoice, InvoiceStatusEnum } from "@/lib/api/invoice-api";
+import {
+  filterInvoices,
+  Invoice,
+  InvoiceStatusEnum,
+} from "@/lib/api/invoice-api";
 import { ResponseType } from "@/types/api";
 
 const PAGE_SIZE = 10;
@@ -86,7 +90,9 @@ export default function AdminInvoicesPage() {
       <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Invoices</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{total} hóa đơn tổng cộng</p>
+          <p className="text-sm text-gray-400 mt-0.5">
+            {total} hóa đơn tổng cộng
+          </p>
         </div>
       </div>
 
@@ -96,11 +102,15 @@ export default function AdminInvoicesPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block" />
-            <h2 className="text-sm font-semibold text-gray-800">Invoice List</h2>
+            <h2 className="text-sm font-semibold text-gray-800">
+              Invoice List
+            </h2>
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => handleStatusChange(e.target.value as InvoiceStatusEnum | "")}
+            onChange={(e) =>
+              handleStatusChange(e.target.value as InvoiceStatusEnum | "")
+            }
             className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
           >
             <option value="">All status</option>
@@ -112,7 +122,9 @@ export default function AdminInvoicesPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="py-16 text-center text-gray-400 text-sm">Đang tải...</div>
+          <div className="py-16 text-center text-gray-400 text-sm">
+            Đang tải...
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -122,67 +134,135 @@ export default function AdminInvoicesPage() {
                     Invoice #
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Product
+                    Khách hàng
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Qty
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Sản phẩm
                   </th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Discount
+                  <th className="hidden md:table-cell px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Tạm tính
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Total
+                  <th className="hidden md:table-cell px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Giảm / Phụ thu
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Tổng
                   </th>
                   <th className="hidden sm:table-cell px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Created at
+                    Ngày tạo
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Status
+                    Trạng thái
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {invoices.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-16 text-center text-gray-400 text-sm">
+                    <td
+                      colSpan={8}
+                      className="py-16 text-center text-gray-400 text-sm"
+                    >
                       Không có hóa đơn nào
                     </td>
                   </tr>
                 ) : (
-                  invoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="px-6 py-3">
-                        <span className="font-mono text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                          {inv.invoiceNumber}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="font-medium text-gray-800 text-xs">{inv.productName}</p>
-                        {inv.invoiceNote && (
-                          <p className="text-xs text-gray-400 mt-0.5 truncate max-w-40">{inv.invoiceNote}</p>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-center text-gray-700">
-                        {inv.quantity}
-                      </td>
-                      <td className="hidden md:table-cell px-4 py-3 text-center text-xs text-gray-500">
-                        {inv.discountPercentage > 0
-                          ? `${inv.discountPercentage}%`
-                          : inv.discountAmount > 0
-                          ? fmtCurrency(inv.discountAmount)
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-center font-medium text-gray-800">
-                        {fmtCurrency(inv.totalAmount)}
-                      </td>
-                      <td className="hidden sm:table-cell px-4 py-3 text-center text-xs text-gray-500">
-                        {fmtDate(inv.createdAt)}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <StatusBadge status={inv.statusName} />
-                      </td>
-                    </tr>
-                  ))
+                  invoices.map((inv) => {
+                    const firstItem = inv.items[0];
+                    const extraItems = inv.items.length - 1;
+                    const hasDiscount =
+                      inv.discountAmount > 0 || inv.discountPercentage > 0;
+                    return (
+                      <tr
+                        key={inv.id}
+                        className="hover:bg-gray-50/60 transition-colors"
+                      >
+                        {/* Invoice # */}
+                        <td className="px-6 py-3 whitespace-nowrap">
+                          <span className="font-mono text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                            {inv.invoiceNumber}
+                          </span>
+                        </td>
+
+                        {/* Customer */}
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-gray-800 text-xs">
+                            {inv.customerName}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {inv.customerPhone}
+                          </p>
+                          {inv.invoiceNote && (
+                            <p className="text-[10px] text-gray-400 mt-0.5 italic truncate max-w-36">
+                              {inv.invoiceNote}
+                            </p>
+                          )}
+                        </td>
+
+                        {/* Items */}
+                        <td className="px-4 py-3">
+                          {firstItem ? (
+                            <>
+                              <p className="text-xs font-medium text-gray-800">
+                                {firstItem.productName}
+                                <span className="text-gray-400 font-normal">
+                                  {" "}
+                                  ×{firstItem.quantity}
+                                </span>
+                              </p>
+                              {extraItems > 0 && (
+                                <p className="text-[10px] text-gray-400 mt-0.5">
+                                  +{extraItems} sản phẩm khác
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </td>
+
+                        {/* Original amount */}
+                        <td className="hidden md:table-cell px-4 py-3 text-right text-xs text-gray-500 whitespace-nowrap">
+                          {fmtCurrency(inv.originalAmount)}
+                        </td>
+
+                        {/* Discount / extra fee */}
+                        <td className="hidden md:table-cell px-4 py-3 text-right text-xs whitespace-nowrap">
+                          {hasDiscount && (
+                            <p className="text-red-500">
+                              −
+                              {inv.discountPercentage > 0
+                                ? `${inv.discountPercentage}%`
+                                : fmtCurrency(inv.discountAmount)}
+                            </p>
+                          )}
+                          {inv.extraFee > 0 && (
+                            <p className="text-gray-500">
+                              +{fmtCurrency(inv.extraFee)}
+                            </p>
+                          )}
+                          {!hasDiscount && inv.extraFee === 0 && (
+                            <span className="text-gray-300">—</span>
+                          )}
+                        </td>
+
+                        {/* Total */}
+                        <td className="px-4 py-3 text-right font-semibold text-gray-800 whitespace-nowrap">
+                          {fmtCurrency(inv.totalAmount)}
+                        </td>
+
+                        {/* Date */}
+                        <td className="hidden sm:table-cell px-4 py-3 text-center text-xs text-gray-500 whitespace-nowrap">
+                          {fmtDate(inv.createdAt)}
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-4 py-3 text-center">
+                          <StatusBadge status={inv.statusName} />
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
